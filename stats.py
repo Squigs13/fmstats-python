@@ -1,10 +1,20 @@
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
+import warnings
+warnings.simplefilter("ignore")
+
 import pandas as pd
 import requests
 import re
 
 API_ENDPOINT = "http://localhost:3200/api/stats/"
 
-rawdata = pd.read_html('JQHistory.html', header=0, encoding="utf-8", keep_default_na=False)
+# Parse command line arguments
+parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
+parser.add_argument("file", help="Filename to process")
+parser.add_argument("season", type=int, help="ID of season")
+args = vars(parser.parse_args())
+
+rawdata = pd.read_html(args['file'], header=0, encoding="utf-8", keep_default_na=False)
 stats = rawdata[1]
 
 for index, row in stats.iterrows():
@@ -74,7 +84,7 @@ for index, row in stats.iterrows():
     row['Av R'] = None
 
   data = {
-    'season_id': 1028,
+    'season_id': args['season'],
     'match_type': index,
     'starts': starts,
     'subs': subs,
@@ -94,19 +104,5 @@ for index, row in stats.iterrows():
     'average_rating': row['Av R']
   }
 
-  # print(data)
-
   r = requests.post(url=API_ENDPOINT, data=data)
   print(r.text)
-
-# print(stats.loc[1]['Tot Apps'])
-# data = {
-#   'season_id': 2,
-#   'match_type': 2,
-#   'goals': stats.loc[1]['Gls'],
-#   'assists': stats.loc[1]['Asts']
-# }
-
-# r = requests.post(url=API_ENDPOINT, data=data)
-# print(r)
-
