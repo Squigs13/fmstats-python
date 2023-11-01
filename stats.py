@@ -104,5 +104,6 @@ for index, row in stats.iterrows():
     'average_rating': row['Av R']
   }
 
-  r = requests.post(url=API_ENDPOINT, data=data)
-  print(r.text)
+  if row['Gls'] != '':
+    r = requests.post(url=API_ENDPOINT, data=data)
+    print(r.text)

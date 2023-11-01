@@ -17,7 +17,7 @@ rawdata = pd.read_html(args['file'], header=0, encoding="utf-8", keep_default_na
 seasons = rawdata[0]
 
 for index, row in seasons.iterrows():
-  print(row['Year'])
+
   data = {
     'player_id': args['player'],
     'year': row['Year'],
@@ -27,7 +27,8 @@ for index, row in seasons.iterrows():
     'division': row['Division']
   }
 
-  r = requests.post(url=API_ENDPOINT, data=data)
-  print(r.text)
+  if row['Year'] != '':
+    r = requests.post(url=API_ENDPOINT, data=data)
+    print(r.text)
 
 
